@@ -1,7 +1,10 @@
 this is file1
 new line added
 
+add post move of test1 to test2
 
 okay new line here
 
 new line on linux
+
+
