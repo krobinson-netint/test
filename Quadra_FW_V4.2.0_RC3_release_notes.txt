@@ -1,0 +1,394 @@
+================================================================================
+Release version: 4.2.0_RC3
+Date: 2022-12-21            FW version: 4.2.0_RC3           SW version: 4.2.0_RC3
+FW API ver: 6F              FW Loader ver: 2.7.0
+--------------------------------------------------------------------------------
+[FW] Support configuration of individual SRIOV NVMe namespace indices by IO command
+     Use ni_rsrc_namespace app in libxcoder to configure
+     Changing FW API version to 6F
+[FW] Fix bug where bitrate/framerate reconfiguration is being undone by sequence change from large to small resolution
+[FW/TOOLS] Allow for separate transfers from host for YUV vs frame metadata
+           Changing FW API version to 6E
+[FW] Compressed FW logs
+     - Encode FW logs to reduce log sizes by factor of ~3
+     - Need to use dictionary generated at FW compile time to decode the raw logs
+[FW] Fix hang when building AI model fails
+[FW] Decoder will export timescale and num_units_in_tick via custom SEI to libxcoder
+     Changing FW API version to 6D
+[FW] Fix bug where intraRefreshArg does not cause the expected number of pixel rows to be refreshed
+[FW] Fix VP9 decoder stuck when encountering resource unavailable issue
+[FW] Fix bug where h265 output with maxFrameSize re-encode and hrdEnable=1 will cause decode error
+[FW/TOOLS] Support xcoder-param "intra_reset_refresh=1" to reset intraPeriod counter when an I-frame is forced
+           Changing FW API version number to 6C
+[FW] Fix bug where 2 sequence headers are inserted for AV1 when first few frames are dropped due to picSkip=1 and small vbvBufferSize
+[FW] Add support for ni_drawbox filter
+     - support selecting color (RGB) but not thickness
+     Changing FW API version to 6B
+[FW] Add persistent log message for reset caused by over temperature
+[FW] Fix Quadra card loss when linux mkfs is used
+[FW] Remove fw_v*-Quadra.img, use nor_flash_v*-Quadra.bin for warm upgrade
+[FW] Improve quality during I-frame only encoding
+     - Set bitrateWindow to 5
+     - Set PicQpDeltaMin to -4, PicQpDeltaMax to 8
+     - Detect flat to detailed scene change & adjust QP
+[FW] Fix invalid frame size reported by JPEG decoder during sequence change to odd width
+[FW] Fix VP9 decoder handling of sequence change from low to high bitrate
+[FW] Add support for maxFrameSize reconfig and fix maxFrameSize re-encode bugs
+     - Support reconfig maxFrameSize
+     - Auto adjust maxFrameSize upon bitrate or framerate reconfig
+     - Fix unnecessary quality decline or frame drop bug during re-encode with new QP
+     - Fix FFmpeg error exit during AV1 maxFrameSize induced re-encode
+     - Fix lack of update for filter level, CDEF strength and other HW registers during AV1 re-encode
+     - Fix bad quality during AV1 re-encode due to lack of update for frame header quantization index, CEDF strength and other parameters
+     Changing FW API version to 6A
+[FW] Fix host command timeout after CPU exception in subsystem
+[FW] Fix card loss during warm upgrade
+[FW/TOOLS] Add feature to set and retrieve log levels dynamically using nvme feature-id 0x1A
+           For more details see: "APPS601-Quadra Dynamic Logging.pdf"
+[FW] Disable external operation of NVMe subsystem reset as it could lead to card-loss
+[FW] Improvements to h265 low latency encoding
+     - When CU level RC is enabled, increase CU level RC max picture size after scene change to reduce latency and improve bitrate stability
+     - Fix maxFrameSize not initialized when vbv buffer (ratecontrol) is disabled
+[FW] Fix I/O errors on decoder instance close during instance/capacity overload
+[FW] Disable data transfer for direct nvme read/write commands as it could lead to corruption because quadra is not a true storage device
+[FW] Reduce total PCIe virtual functions from 7 to 6 for compatibility with certain old systems
+[FW] Fix bug where VP9 decoder session can become stuck during out of memory event
+[FW] Add support for AV1 error_resilient_mode in AV1 encoder
+     This will set primary_ref_frame to PRIMARY_REF_NONE and allow decoders to continue when keyframes are lost/corrupted during transmission
+     This will cost some compression efficiency
+     Changing FW API version to 69
+[FW] Fix card loss when host I/O attempts to read/write to out of range address (>0x7d000000)
+[FW] Add support for HW frames transcoding of 4x4 tiled format to improve 10bit transcode performance
+     For more details see: "APPS570-Quadra Decoder Internal Tiled Format Transcoding.pdf"
+     Changing FW API version to 68
+[FW] Fix bug where AUD clock is not set to normal after warm upgrade during thermal throttle
+[FW] Fix random memory leak after decoder sequence change
+[FW] Fix encoder load calculation bug on T1U cards
+[FW/TOOLS] Quadra SMBus fixes and updates to be more like Logan SMBus:
+           - Fix bug when retrieving data with alternating single reads and writes
+           - Implement new model number scheme
+           - Report additional byte for decoder and encoder load
+           - Perform PEC calculation on read instead of write
+           - Initialize fixed values only once instead of on every write
+           - Update variable data using a timer
+           - Switch from interrupt polling to real CPU-interrupt with NVMePeriInterruptHandler()
+[FW] Fix decoding issue when sequence change occurs early in stream
+================================================================================
+Release version: 4.1.0_RC1
+Date: 2022-10-13            FW version: 4.1.0_RC1           SW version: 4.1.0_RC1
+FW API ver: 67              FW Loader ver: 2.4.0
+--------------------------------------------------------------------------------
+[FW] Fix encoder divide by zero exception and other issues surrounding reconfig
+     - Prevent config or reconfig with zero bitrate or framerate settings
+     - Ignore out of range bitrate and framerate reconfig
+[FW] Add error concealment feature
+[FW] Add activity LED for T1U
+[FW] Fix bug in model load calculation when RcEnable=0 and framerate!=30
+[FW] Support recovery from CPU exceptions using FLR
+[FW] NVMe behaviour changes and fixes for NVMe spec non-compliant hosts
+[FW] Fix issues when FLR occurs during transcoding traffic on linux 3.10.0-327 and 4.18.0-348
+[FW] Add support for ni_quadra_rotate filter
+     Changing FW API version to 67
+[FW] Fix I/O errors when decoder over instance/capacity
+[FW] Allocate AI network binaries for one instance at a time to maximize number of instances that could complete allocation
+[FW] Fix bug where re-encoded frames are reported as part of number of frames completed when lookahead is enabled
+[FW] Fix unexpected internal shutdown during decoding
+[FW] Fix allocation of large AI models by splitting allocation into multiple chunks
+[FW] Fix AV1 non-8-aligned width output corruption caused by incorrect stride when implicitly cropping non-8-aligned width
+[FW] When AI network setup fails, pass original error to libxcoder
+[FW] Fix SMBus reporting for decoder and encoder load
+[FW] When packet exceeds maxFrameSize, re-encode the frame
+[FW] Refactor decoder bitstream buffer reallocation
+     Changing FW API version to 66
+[FW] Fix incorrect alpha channel for frames after first frame in overlay filter
+[FW] Fix jpeg decode sequence change stuck
+[TOOLS] Fix quadra_fw_info tool's output missing first character for REVISION
+[FW] Fix frame loss when using intraRefreshDuration
+[FW] Fix VP9 decode internal scaler instance open failure undetected by libxcoder
+[FW] Fix inability to get FL version on certain systems
+[FW/TOOLS] Add session statistics reporting same as T408
+[FW] Fix memory leak on p2p session cleanup
+[FW] Enabled Jpeg Encoding of source width that is not multiple of 4
+[FW] Add support for defining HEVC HDR Mastering Display Colour Volume SEI through xcoder-params
+     - works with hevc only, h264 is done through sei
+     - encoder config struct updated using reserved area
+     Changing FW API version to 65
+[FW] Fix bug in calculation of AI core load causing it to be over 100%
+================================================================================
+Release version: 4.0.0_RCD
+Date: 2022-08-12            FW version: 4.0.0_RCD           SW version: 4.0.0_RCB
+FW API ver: 64              FW Loader ver: 2.3.1
+--------------------------------------------------------------------------------
+[FW] Fix AI core hang when application side exits abnormally
+[FW] Fix 1st pass HW timeout causing cuTree thread exception, caused by lookahead thread not setting error status
+[FW] Fix loss of ni_pad background colour by storing rgba colour on config output in scaler context to maintain fill colour from frame to frame
+[FW/TOOLS] Record log buffer start address in fixed address so loganProbe can operate without addr.json file
+[FW] Add API support for large number of inputs for 50-input compositor demo
+     Changing FW API version to 64
+[FW] Add P2P support for scaler output
+[FW] Add support for bgr0/uyvy/yuyv/bgrp/nv16 in filters
+[FW] Fix ungraceful exit when performing unsupported HWframe sequence change from low to high resolution
+[FW] Set NVM Subsystem NVMe Qualified Name to fix warning when interfacing with NVMe v1.3+ driver
+[FW] Enable the support of VUI reconfiguration
+     Add new reconfigurable parameter videoFullRange
+     Changing FW API version to 63
+[FW/TOOLS] Add encoder SSIM calculation and reporting through xcoder-param "enableSSIM=1"
+           Changing FW API version to 62
+[FW] Reenable AI for T1U
+[FW] Fix 2-pass encode with intraPeriod 2 incorrectly encode all frames as I-frame, caused by 2nd pass not following 1st pass gop decision
+     Fix 2-pass encode headers not repeated, caused by resend headers condition in application layer not matching with actual frame type decision
+[FW] Fix decoder model load calculation bug causing it to show 0 when under load
+[FW] Add Decoder Busy query support
+     Changing FW API version to 61
+[FW] Use get-feature id 0xC0 get device clock and low level configuration
+[FW] Fix AV1 show frame info incorrect when picture skipped by updating AV1 poc to display after picture encode, only if picture is not skipped
+[FW] Fix VP9 decoder stuck when out of memory
+[FW] Reduce timeout failures in scaler during heavy load
+[FW] Fix headers resent before incorrect frame when pictures are skipped
+     Fix intra refresh cycle incorrectly repeated when pictures are skipped
+     Fix incorrect reference invalidation when pictures are skipped
+     Fix incorrect reference causing decode fail when I-frame generated by reference invalidation is skipped
+[FW] Set SPS->VUI->fixed_frame_rate_flag=1
+     Changing FW API version to 56
+[FW] Fix memory leak when unfolding of AI neural network binary data fails
+[FW] Fix I/O error during decoding of certain bad clips
+[FW] Fix h.264 2-pass encode memory leak 
+     Fix wmv mkv container 2-pass encode memory leak
+[FW] Reuse SHA256 of AI neural network binary files from libxcoder to reduce processing time
+[FW] Set SPS->VUI->video_signal_type_present_flag=1 by default
+[FW] Fixed resource leak during overcapacity causing aborts to happen on different commands
+[FW] Fix NVMe detection issues on industrial PCs by invalidating some security admin commands and IO commands
+[FW] Report power measurement using NVMe vendor specific get-log
+[FW] Adding logging for temperature and clock speeds on throttle state change
+[FW] Add support for SMBus ARP
+================================================================================
+Release version: 3.1.0_RC6
+Date: 2022-05-16            FW version: 3.1.0_RC6           SW version: 3.1.0_RC4
+FW API ver: 54              FW Loader ver: 1.4
+--------------------------------------------------------------------------------
+[FW] Fix FW free caused by incorrect handling of PCIe DMA interrupt
+[FW] Fix multicore adaptive gop decision incorrect caused by first few frames do not have encoded frames stats to make decision
+[FW] Fix card loss caused by Hwavframes + split + 2d filter testcase
+[FW] Optimize sequence change by config new resolution instead of close / open encoder instance, if resolution changes from large to small
+     Fix 2-pass headers not repeated before IDR due to uninitialized variable
+[FW] Support AV1 non-8x8-aligned resolution by forcing / cropping input to 8x8 align, while keeping the input frame cr / cb planes buffer offsets
+     Changing FW API version to 54
+[FW] Scaler_manager.cpp log improvement - reenable the output buffer ID printout
+[FW] Added the support of maxFrameSize libxcoder parameter to limit the frame size
+     Changing FW API version to 53
+[FW] Skip JpegDecNextPicture when JpegDecDecode returns error
+[FW] Fix case where 2D overlay followed by scaler can cause FW freeze
+[FW] Fix Shared memory / memory bin leakage after multiple aborted/timeout sessions
+[FW] Free input buffers on error in Jpeg decoder
+[FW] Fix missing release of 2d core upon execute errors
+[FW] Removed code that produces io errors when received from subsystem or
+     premature completion
+[FW] Fix decoder stuck on error condition in decoder jpeg handler
+[FW] Fix 2-pass bitrate change (hrd conformance enabled) having 2 headers at
+     stream start when bitrate change triggered on frame less than 2-pass
+     delay frame count
+[FW] Fix multicore encode early close causing exception when flush before all cores assigned frames to encode
+[FW] Fix AV1 intra refresh invalid output bitstream
+[FW] Support SMBus repeated start
+[FW] Fix decoding of quadra AV1 streams on Chrome with HW accelerated decoding
+[FW] Fix session timeout reclaim before subsystem close completes
+     Prevent log spam when subsystem close cannot complete
+[FW] Reject high 4:4:4 predictive profile
+[FW/TOOLS] Fix nvme timeout when HLG input + odd ni_scale + max resolution ni_pad
+[FW] Fix encoder stuck when encoder init mem alloc fail
+[FW] PCIe DMA stall not recovered
+     1. Skip pcie DMA reset channel status timeout check, because when DMA stall, channel status remains RUNNING after stopping the channel
+     2. Check DMA stall and reset DMA only if DMA channel remaining length is 0
+     3. Wait for DMA channel stop by waiting for status to exit RUNNING or until timeout
+     4. Wait for DMA engine disable by waiting for engine bit clear to 0 or until timeout
+     5. Modify DMA stall detection to compare DMA channel status and remaining transfer length
+================================================================================
+Release version: 3.0.0_RC5
+Date: 2022-04-19            FW version: 3.0.0_RC5           SW version: 3.0.0_RC2
+--------------------------------------------------------------------------------
+[KNOWN-ISSUE] On FFmpeg-n3.4.2, exceeding 128 instances causes NVMe hang
+[KNOWN-ISSUE] Missing packet data (eg. from UDP packet loss) could cause entire frame to be dropped from decoder without error concealment
+[KNOWN-ISSUE] Netint HW padding filter on 8K 10bit may cause IO error
+[KNOWN-ISSUE] Cannot initialize software structures (init_rsrc) when both T408 and Quadra devices are present on computer
+[KNOWN-ISSUE] Some illegal parameters for Netint HW filters are not rejected
+[KNOWN-ISSUE] Multi 4K streams on multi Quadra server (eg. 70 4k streams on server with 7 quadra cards) will have have some streams stall
+[KNOWN-ISSUE] Decoding frame with negative PTS/DTS causes frame to drop
+[KNOWN-ISSUE] Using -xcoder-params "picSkip=1" with -xcoder-params "vbvBufferSize" causes frame loss
+[KNOWN-ISSUE] Use of "intraPeriod=2" with 2-pass encode should be rejected as an invalid combination, and it causes visual corruption
+[KNOWN-ISSUE] Default session timeout is 15s. Thus, stream processes ended via SIGKILL will linger on FW for 15s before its resources are freed
+[KNOWN-ISSUE] Netint HW overlay filter may cause device fail when 4k 8bit is overlayed on 8k 10bit
+[KNOWN-ISSUE] firmware_upgrade_win.exe may fail on rare occasion. To upgrade, run again after system reboot
+[FW] Fix for PCIe DMA stall recovery stuck
+================================================================================
+Release version: 3.0.0_RC3
+Date: 2022-04-18            FW version: 3.0.0_RC3           SW version: 3.0.0_RC2
+--------------------------------------------------------------------------------
+[KNOWN-ISSUE] On FFmpeg-n3.4.2, exceeding 128 instances causes NVMe hang
+[KNOWN-ISSUE] Missing packet data (eg. from UDP packet loss) could cause entire frame to be dropped from decoder without error concealment
+[KNOWN-ISSUE] Netint HW padding filter on 8K 10bit may cause IO error
+[KNOWN-ISSUE] Cannot initialize software structures (init_rsrc) when both T408 and Quadra devices are present on computer
+[KNOWN-ISSUE] Some illegal parameters for Netint HW filters are not rejected
+[KNOWN-ISSUE] Multi 4K streams on multi Quadra server (eg. 70 4k streams on server with 7 quadra cards) will have have some streams stall
+[KNOWN-ISSUE] Decoding frame with negative PTS/DTS causes frame to drop
+[KNOWN-ISSUE] Using -xcoder-params "picSkip=1" with -xcoder-params "vbvBufferSize" causes frame loss
+[KNOWN-ISSUE] Use of "intraPeriod=2" with 2-pass encode should be rejected as an invalid combination, and it causes visual corruption
+[KNOWN-ISSUE] Default session timeout is 15s. Thus, stream processes ended via SIGKILL will linger on FW for 15s before its resources are freed
+[KNOWN-ISSUE] Netint HW overlay filter may cause device fail when 4k 8bit is overlayed on 8k 10bit
+[KNOWN-ISSUE] firmware_upgrade_win.exe may fail on rare occasion. To upgrade, run again after system reboot
+[FW] Skip pcie DMA reset channel status timeout check, because when DMA stall, channel status remains RUNNING after stopping the channel
+================================================================================
+Release version: 3.0.0_RC2
+Date: 2022-04-15            FW version: 3.0.0_RC2           SW version: 3.0.0_RC2
+--------------------------------------------------------------------------------
+[FW] Add PCIe DMA stall detection, if stall detected, reset PCIe DMA and re-trigger PCIe DMA transfer
+[FW] Fix decoder overcapacity error propagation
+[FW] Upload instance count support on XcoderGeneralStatus
+     Changing API version to 52
+[FW] Fixed Jpeg enc issue generating large bitstream
+[FW] Added cache writeback right after JPEG header insertion to resolve cache issue
+[FW] Detect unknown bit depth and output picture formats
+[FW] Fix JPEG decoding sequence change
+================================================================================
+Release version: 3.0.0_RC1
+Date: 2022-04-13            FW version: 3.0.0_RC1           SW version: 3.0.0_RC1
+--------------------------------------------------------------------------------
+[FW] Fixed VP9 sequence change from high to low resolutions
+     VP9 sequence change for low to high resolutions not working.
+[FW] Fix 2-pass reconfig bitrate
+       1. Update rate control library librate_control_picture.a
+       2. Fix 2-pass reconfig bitrate fails if cuLevelRc enabled
+       3. Fix problem when reconfig bitrate / framerate and reconfig min / max QP occur on same frame
+     Add safe handling for EOS before headersDecodedCB(), prevents resource free issues during dec close
+[FW] Add windows dump logs tool
+     support FW upgrade via regular-io commands
+     support dump logs via regualar-io commands on Windows
+[FW] Report P2P Memory Bin Usage
+     Change API version to 51
+[FW] P2P memory reclamation
+     Add P2P memory reclamation on session inactivity
+[FW] Set xcoder_support type to 2 for Quadra in NVMe identify data
+     Change API version to 50
+[FW] Fix AV1 multicoreJointMode
+     1. Fix AV1 multicore encode fail by fixing incorrect poc and show_frame info when multicore enabled
+[FW] Fix for reentery assert on decoder close
+[FW] Fix session timeout reclaim causing mem bin buffer issues
+[FW] Fix 10-bit 2-pass encode HW timeout
+[FW] Support AV1 intra refresh
+     1. Add support for AV1 intra refresh
+     2. Add support for force IDR during AV1 intra refresh, which overrides intra refresh cycle / resets intra period, and generates actual key frame
+[FW] Fix 2-pass and 1-pass reconfig bitrate & framerate
+     1. Fix 2-pass reconfig bitrate exception caused by non-anchor frame taking invalid qp -1 from re-inited anchor frame predictor
+     2. Fix h.265 and h.264 reconfig framerate causing decode fail by not inserting SPS upon framerate change
+     3. Fix h.265 with hrd conformance (VUI/SEI) reconfig bitrate / framerate causing decode fail by force IDR, and wait until IDR frame encoding before update rc / insert SPS
+     4. Fix reconfig framerate updated time increment (for bucket level calculation) for previous frame encoded prior to frame rate change
+[FW] Fixed the CRF problem generating the same bitstream for CRF 23 & 24 with frame rate 25
+[FW] Fix dec seqchange and JPEG write
+     - Add ability for decoder to reallocate bitstream buffers when requested
+     - Fix VS_BITSTREAM_BUF to distinguish between query and actual writes
+     Change API version to 41
+[FW] Fix Scaler profiling
+[FW] Prevent io being resent from nvme driver if errors already happen
+[FW/TOOLS] Encoder performance improvements
+[FW] Vp9 decoder odd resolution displaymatrix show error
+[FW] Removed noc reset from TopInitMainFw - helps with warm upgrade
+[FW] Parallel instance upload
+     - Session manager service loop 10Hz check
+     - NSQ,NCQ Coalescing
+     - Upload instance no longer takes away instance count from ep
+     - Upload instance limited to 128 instances
+     Changing API version to 40
+[FW] Pre allocate decode command memory buffer
+[FW] Added the support for JPEG enc model load
+[FW] Port of configurable per session timeout from t408
+[FW] Fix deadlock when exiting abnormally
+[FW] Support confgurable long term references count
+     1. Allow user to configure long term references count (1 or 2) to workaround 2 LTRs decode issue
+     Changing API version to 31
+[FW] Require no alignment for RGBA
+[FW] Enable dump_cpu_debug() for NOC errors
+[FW] Fix filler enable invalid output & AV1 pic skip encode fail & AV1 frame loss when PTS is repeated
+     1. Fix corrupted filler NAL by increasing output buffer allocation when encode with low resolution and high bitrate
+     2. Fix skipping frame cause AV1 encode fail by not output packet if frame is skipped
+     2. Fix repeated PTS cause AV1 frame loss by modifying packet merge to be based on show frame info
+     Changing API version to 30
+[FW] SMBus support for T2 and T4
+[FW] Reduced decoder VPU timeout to prevent HW timeout on bad frames from causing timeouts on ffmpeg.
+[FW/TOOLS] Introduce tools/smbus.py
+[FW/TOOLS] Add quadra_fw_info tool
+[FW] Add support for using n2d_filterblit when scaling.
+[FW] Add assertion to scaler manager if illegal membin arrives
+[FW] Updated support for aborted transactions
+     Added abort of all pending commands when processing session close.
+[FW] Correct AI performance load
+     1. correct the load value reporting to the applications.
+     2. expand per session buffer numbers so that it has enough input
+        images to feed the hardware.
+[FW] Temperature Throttling and SMART Log Changes
+     - SMART log temperature related fields are only updated whenever
+       UpdateSmartLog() is triggered instead of being updated every minute.
+     - Fix composite temperature reporting for SMBus.
+     - Temperature throttling and DUTShutdownAndReset() will happen based on
+       the composite temperature threshold.
+================================================================================
+Release version: 2.3.0_RC1
+Date: 2022-02-28            FW version: 2.3.0_RC1           SW version: 2.3.0_RC1
+--------------------------------------------------------------------------------
+[FW] Resolve conflict between P2P DMA upload and hwupload combined buffer query and desc read
+[FW] Removed dmesg error by returning SUCCESS from HandleEventOperationRequestDescriptorReady() in firmware
+     - Renamed InstanceID to SubsystemID on nvme/session manager
+[FW] Support reconfig framerate, Add rcQpDeltaRange
+     1. Add reconfig framerate support
+     2. Add rcQpDeltaRange in config parameter to adjust cu level rc max qp delta relative to frame qp
+[FW] Hwupload combined buffer query and desc read
+[FW] HWupload query retry acquire buffer bug fix
+[FW] IPC queue full handling
+[FW] Support LoganProbe with P2P DMA
+================================================================================
+Release version: 2.2.0_EN1
+Date: 2022-01-29            FW version: 2.2.0_EN1           SW version: 2.2.0_EN1
+--------------------------------------------------------------------------------
+[FW] Low delay encode changes for P2P DMA copy demo
+     1. For P2P DMA copy demo, do not alloc mem bin buffers for HW frame low delay mode encode (will only use buffers passed from upstream)
+[FW] Create P2P memory region in memory bin manager
+     Added new memory heap in memory bin manager for P2P DMA.
+     Changes to EP to allow acquire of frames from the P2P region.
+================================================================================
+Release version: 2.2.0_RC1
+Date: 2022-01-22            FW version: 2.2.0_RC1           SW version: 2.2.0_RC1
+--------------------------------------------------------------------------------
+[FW] Fix P frame size too big & gopPresetIdx 7 issues
+     1. Update rate control library
+[FW] Improve NVMe Log Output
+[FW] Repeat headers before IDR caused by referenes invalidation & Reconfig intra period cause headers repeated to incorrect frame
+     1. Support repeating headers before IDR frame caused by invalidating referenes
+     2. Workaround headers repeated in front of incorrect frame after reconfig intra period (NOTE - reconfig intra period is currently not supported)
+[FW] Fix Temperature Throttling Implementation
+     Rework SMART Log Critical Warning Temperature bit set
+[FW] Fix ffmpeg force_key_frames transcode missing key frames
+     add support to report h.265 IRAP besides IDR (CRA / BLA) nal types as key frames
+================================================================================
+Release version: 2.1.0_RC1
+Date: 2022-01-14            FW version: 2.1.0_RC1           SW version: 2.1.0_RC1
+--------------------------------------------------------------------------------
+[FW] Persistent log dump feature
+[FW] gopPresetIdx 3, 7, 8 rate control related changes
+     1. Update rate control library librate_control_picture.a
+     2. Add gop low delay flag in rate control structure required for rate control library
+[FW] Improve error handling on AI side
+[FW] Enable DP_IPC_BYPASS by default to improve dec performance
+[FW] Optimize multi-instance encode latency
+[FW] Support LTR & short term / long term reference invalidation
+     1. Support short term / long term reference invalidation
+     2. Support config and reconfig of LTR interval
+     3. Support setting LTR on frame basis
+[FW] Accomodate resource monitor load for temperature throttling
+[FW] Add temperature throttling
+[FW] Fix multi-instance JPEG decode
+     Each JPEG instance gets its own command FIFO instead of sharing
+     one to prevent synchronization issue.
+[FW] Improve performance in scaler manager
+================================================================================
+Release version: 1.2.0
+Date: 2021-11-03            FW version: 1.2.0              SW version: 1.2.0
+--------------------------------------------------------------------------------
+[FW] First Customer Availability
